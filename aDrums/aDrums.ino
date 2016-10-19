@@ -2,7 +2,6 @@
 #include <MIDIUSB.H>
 #include <EEPROM.h>
 
-
 #define VersionMajor 1
 #define VersionMinor 0
 
@@ -55,6 +54,7 @@ byte pinPitch[MAX_PIN_SIZE];
 
 #pragma region Setups
 void setup() {
+	EEPROM_Load();
 	setupADC();
 	setupSerial();
 }
@@ -91,6 +91,7 @@ void setupSerial() {
 	Serial.print(".");
 	Serial.print(VersionMinor);
 }
+
 void processSerialInput() {
 	while (Serial.available()) {
 		int inputData = Serial.read(); // this is 'int' to handle -1 when no data
@@ -125,6 +126,7 @@ void parse(byte inputData) {
 void processSysexMessage() {
 	sysexCallback(storedInputData[0], sysexBytesRead - 1, storedInputData + 1);
 }
+
 void TX_SERIAL(byte command, byte pin, int value) {
 	Serial.write(START_SYSEX);
 	Serial.write(command);
@@ -210,15 +212,14 @@ byte getVelocity(byte pin, int analogue_value) {
 #pragma endregion
 
 #pragma region Callbacks
-//Firmata Messages
 #define toMSG(NAME) MSG_ ## NAME
 #define caseCallBack(NAME) \
-	case toMSG(NAME): {\
+	case toMSG(NAME): \
 		if(isSet) \
 			  NAME [arrayPointer[0]] = arrayPointer[1]; \
 		else \
 			TX_SERIAL( command , arrayPointer[0], NAME [arrayPointer[0]] ); \
-	break; }
+	break; 
 
 #define MSG_GET_HANDSHAKE 0
 #define MSG_GET_PINCOUNT 8
@@ -233,40 +234,105 @@ void sysexCallback(byte command, byte size, byte* arrayPointer) {
 	switch ((command >> 1))
 	{
 	case MSG_GET_HANDSHAKE: TX_SERIAL(command, VersionMajor, VersionMinor); break;
-	case MSG_GET_PINCOUNT: TX_SERIAL(command, MAX_PIN_SIZE, 0); break;
+	case MSG_GET_PINCOUNT: TX_SERIAL(command, MAX_PIN_SIZE, 0); break; 
 	case MSG_EEPROM: if (isSet) EEPROM_Save(); else EEPROM_Load(); TX_SERIAL(command, 1, 1); break;
-	caseCallBack(pinType)
-	caseCallBack(pinThreshold)
-	caseCallBack(pinNoteOnThreshold)
-	caseCallBack(pinPitch)
-
-	//case MSG_SET_PIN_TYPE: callbackSetPinType(arrayPointer[0], arrayPointer[1]); break;
-	//case MSG_SET_PIN_THRESHOLD: callbackSetPinThreshold(arrayPointer[0], arrayPointer[1]); break;
-	//case MSG_SET_PIN_NOTEON_THRESHOLD: callbackSetPinNoteOnThreshold(arrayPointer[0], arrayPointer[1]); break;
-	//case MSG_SET_PIN_PITCH: callbackSetPinPitch(arrayPointer[0], arrayPointer[1]); break;
+		caseCallBack(pinType);
+		caseCallBack(pinThreshold);
+		caseCallBack(pinNoteOnThreshold);
+		caseCallBack(pinPitch);
 	}
 }
-//void callbackGetHandshake() {
-//	;
-//}
-//void callbackSetPinType(byte pin, byte value) {
-//	pinType[pin] = value;
-//}
-//void callbackSetPinThreshold(byte pin, byte value) {
-//	pinThreshold[pin] = value;
-//}
-//void callbackSetPinNoteOnThreshold(byte pin, byte value) {
-//	pinNoteOnThreshold[pin] = value;
-//}
-//void callbackSetPinPitch(byte pin, byte value) {
-//	pinPitch[pin] = value;
-//}
+
 #pragma endregion
 
 #pragma region EEPROM
+#define _S_EPROM(a,b) eeprom_write_bytes((MAX_PIN_SIZE * b), a, MAX_PIN_SIZE)
+#define _L_EPROM(a,b) eeprom_read_bytes((MAX_PIN_SIZE * b), a, MAX_PIN_SIZE)
+#define _EPROM_StartAddr 0
+
 void EEPROM_Save() {
+	_S_EPROM(pinType, 0);
+	_S_EPROM(pinThreshold, 1);
+	_S_EPROM(pinNoteOnThreshold, 2);
+	_S_EPROM(pinPitch, 3);
 }
 void EEPROM_Load() {
+	_L_EPROM(pinType, 0);
+	_L_EPROM(pinThreshold, 1);
+	_L_EPROM(pinNoteOnThreshold, 2);
+	_L_EPROM(pinPitch, 3);
+}
+
+//
+// Absolute min and max eeprom addresses.
+// Actual values are hardware-dependent.
+//
+// These values can be changed e.g. to protect
+// eeprom cells outside this range.
+//
+const int EEPROM_MIN_ADDR = 0;
+const int EEPROM_MAX_ADDR = 1023;
+
+//
+// Returns true if the address is between the
+// minimum and maximum allowed values,
+// false otherwise.
+//
+// This function is used by the other, higher-level functions
+// to prevent bugs and runtime errors due to invalid addresses.
+//
+boolean eeprom_is_addr_ok(int addr) {
+	return ((addr >= EEPROM_MIN_ADDR) && (addr <= EEPROM_MAX_ADDR));
+}
+
+//
+// Writes a sequence of bytes to eeprom starting at the specified address.
+// Returns true if the whole array is successfully written.
+// Returns false if the start or end addresses aren't between
+// the minimum and maximum allowed values.
+// When returning false, nothing gets written to eeprom.
+//
+boolean eeprom_write_bytes(int startAddr, const byte* array, int numBytes) {
+	// counter
+	int i;
+
+	// both first byte and last byte addresses must fall within
+	// the allowed range  
+	if (!eeprom_is_addr_ok(startAddr) || !eeprom_is_addr_ok(startAddr + numBytes)) {
+		return false;
+	}
+
+	for (i = 0; i < numBytes; i++) {
+		EEPROM.write(startAddr + i, array[i]);
+	}
+
+	return true;
+}
+
+//
+// Reads the specified number of bytes from the specified address into the provided buffer.
+// Returns true if all the bytes are successfully read.
+// Returns false if the star or end addresses aren't between
+// the minimum and maximum allowed values.
+// When returning false, the provided array is untouched.
+//
+// Note: the caller must ensure that array[] has enough space
+// to store at most numBytes bytes.
+//
+boolean eeprom_read_bytes(int startAddr, byte array[], int numBytes) {
+	int i;
+
+	// both first byte and last byte addresses must fall within
+	// the allowed range  
+	if (!eeprom_is_addr_ok(startAddr) || !eeprom_is_addr_ok(startAddr + numBytes)) {
+		return false;
+	}
+
+	for (i = 0; i < numBytes; i++) {
+		array[i] = EEPROM.read(startAddr + i);
+	}
+
+	return true;
 }
 #pragma endregion
 

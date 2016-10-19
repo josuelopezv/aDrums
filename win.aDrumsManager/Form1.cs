@@ -26,7 +26,16 @@ namespace aDrum
   
         private void button1_Click(object sender, EventArgs e)
         {
-            new DrumManager().Connect();
+            using (var dm = new DrumManager())
+            {
+                dm.Connect();
+                dm.Triggers.ElementAt(2).Threshold = 100;
+                dm.SaveSettings();
+                dm.LoadSettings();
+                MessageBox.Show(dm.Triggers.ElementAt(2).Threshold.ToString());
+                
+                
+            } 
         }
 
     }

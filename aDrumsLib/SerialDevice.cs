@@ -31,14 +31,13 @@ namespace aDrumsLib
 
             Open();
 
-            var r = RunCommand(SysExMsg.MSG_HANDSHAKE, CommandType.Get);
-            if (r.Parameters.Length != 2) throw new Exception($"Not a valid aDrum response in {COM_Port}");
-            aDrumVersion = new Version(r.Parameters[0], r.Parameters[1]);
+            var r = RunCommand(SysExMsg.MSG_GET_HANDSHAKE, CommandType.Get);
+            if (r.Values.Length != 2) throw new Exception($"Not a valid aDrum response in {COM_Port}");
+            aDrumVersion = new Version(r.Values[0], r.Values[1]);
 
-            Close();
         }
 
-        private void Send(params byte[] message)
+        public void Send(params byte[] message)
         {
             Write(message, 0, message.Length);
         }
@@ -62,13 +61,13 @@ namespace aDrumsLib
 
         internal SysExMessage RunCommand(SysExMessage msg, int Timeout = 30)
         {
-            if (BytesToRead != 0) //clear the buffer from any sent bytes previously
-                ReadExisting();
-            Send(msg.ToArray());
-            var r = ReadSysEx(Timeout);
-            if (r.Command != msg.Command)
-                throw new ArrayTypeMismatchException($"Command Mismatch. Command Sent: '{msg.Command}', Command Read: '{r.Command}'");
-            return r;
+                if (BytesToRead != 0) //clear the buffer from any sent bytes previously
+                    ReadExisting();
+                Send(msg.ToArray());
+                var r = ReadSysEx(Timeout);
+                if (r.Command != msg.Command)
+                    throw new ArrayTypeMismatchException($"Command Mismatch. Command Sent: '{msg.Command}', Command Read: '{r.Command}'");
+                return r;
         }
 
         private SysExMessage ReadSysEx(int TimeoutSeconds)
