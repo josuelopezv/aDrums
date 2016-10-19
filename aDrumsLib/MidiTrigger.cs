@@ -66,7 +66,6 @@ namespace aDrumsLib
                     break;
                 default:
                     throw new Exception ($"Parse error Command:'{msg.Command}' not valid");
-                    break;
             }
         }
     }

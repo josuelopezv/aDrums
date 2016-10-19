@@ -23,7 +23,7 @@ namespace aDrum
             textBox1.Text = String.Join("\n", DrumManager.getCOMPorts());
 
         }
-  
+
         private void button1_Click(object sender, EventArgs e)
         {
             using (var dm = new DrumManager())
@@ -33,10 +33,15 @@ namespace aDrum
                 dm.SaveSettings();
                 dm.LoadSettings();
                 MessageBox.Show(dm.Triggers.ElementAt(2).Threshold.ToString());
-                
-                
-            } 
+
+
+            }
         }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var o = AvrUploader.Upload();
+            MessageBox.Show(o);
+        }
     }
 }

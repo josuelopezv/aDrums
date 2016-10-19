@@ -1,57 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace aDrumsLib
 {
-    //todo: use avrdude is lighter than ide
-    public class ArduinoUploader
+    public class AvrUploader
     {
-        /// <summary>
-        /// path to arduino exe
-        /// ex C:\Program Files (x86)\Arduino\arduino.exe
-        /// </summary>
-        public string UploaderExePath { get; set; }
-        /// <summary>
-        /// path to INO File (arduino sketch)
-        /// </summary>
-        public string SketchFilePath { get; set; }
-
-        public ArduinoUploader(string s_ArduinoExePath, string s_SketchFilePath)
+        public static IEnumerable<string> getPorts()
         {
-            UploaderExePath = s_ArduinoExePath;
-            SketchFilePath = s_SketchFilePath;
+            return SerialDevice.GetPortNames();
         }
 
-        public void Upload()
+        private static string ResetBoard(string comPort)
         {
-            Execute("--upload " + SketchFilePath);
+            var oldPorts = getPorts();
+            var s = Factory.getSerialPort();
+            s.PortName = comPort;
+            s.BaudRate = 1200;
+            s.Open();
+            s.Close();
+            System.Threading.Thread.Sleep(2500);
+            return getPorts().Where(x => !oldPorts.Contains(x)).FirstOrDefault();
         }
 
-        private void Execute(string args)
+        public static string Upload(string comPort, string UploaderExePath, string configFilePath, string HexFilePath)
         {
-            Process P = Process.Start(UploaderExePath, args);
-            P.WaitForExit();
-            int result = P.ExitCode;
-            switch (result)
+            if (string.IsNullOrWhiteSpace(comPort))
+                throw new Exception("COM Port not found");
+
+            var ProgrammerPort = ResetBoard(comPort);
+
+            if (string.IsNullOrWhiteSpace(ProgrammerPort))
+                throw new Exception("Programmer Port not found");
+
+            return Execute($"{UploaderExePath} -V -C \"{configFilePath}\" -v -p atmega32u4 -c avr109 -P {ProgrammerPort} -b 57600 -D -U flash:w:\"{HexFilePath}:i\"");
+
+        }
+
+        public static string Upload(string comPort)
+        {
+            var path = AppDomain.CurrentDomain.BaseDirectory + "avrUploader";
+            return Upload(comPort,
+                 $"{path}\\avrdude",
+                 $"{path}\\avrdude.conf",
+                 $"{path}\\aDrums.ino.hex"
+                 );
+        }
+
+        public static string Upload()
+        {
+            return Upload(getPorts().FirstOrDefault());
+        }
+
+        private static string Execute(string command)
+        {
+            var avrprog = new System.Diagnostics.Process()
             {
-                case 0:
-                default:
-                    break;
-                case 1:
-                    throw new UploadException("Build failed or upload failed");
-                case 2:
-                    throw new UploadException("Sketch not found");
-                case 3:
-                    throw new UploadException("Invalid (argument for) commandline option");
-                case 4:
-                    throw new UploadException("Preference passed to --get-pref does not exist");
-            }
-        }
+                StartInfo = new System.Diagnostics.ProcessStartInfo("cmd")
+                {
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true,
+                },
+            };
 
-        public class UploadException : Exception { public UploadException(string Message) : base(Message) { } }
+            avrprog.Start();
+            avrprog.StandardInput.AutoFlush = true;
+            avrprog.StandardInput.WriteLine(command);
+            avrprog.StandardInput.Close();
+
+            return
+                $"{command}\r\n"+
+                avrprog.StandardError.ReadToEnd().Trim();
+        }
     }
 }

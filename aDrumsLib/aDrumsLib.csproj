@@ -44,12 +44,43 @@
     <Compile Include="ArduinoUploader.cs" />
     <Compile Include="DrumManager.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="ISerialPort.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerialDevice.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="SerialDevice.cs" />
     <Compile Include="SysExMessage.cs" />
     <Compile Include="MidiTrigger.cs" />
+    <Compile Include="winSerialPort.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="avrUploader\aDrums.ino.hex">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="avrUploader\avrdude.conf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="avrUploader\signed_driver\sparkfun.cat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="avrUploader\avrdude.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avrUploader\libusb0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avrUploader\signed_driver\dpinst-amd64.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avrUploader\signed_driver\dpinst-x86.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="avrUploader\signed_driver\sparkfun.inf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

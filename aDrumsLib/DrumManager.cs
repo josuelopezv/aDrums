@@ -34,6 +34,7 @@ namespace aDrumsLib
 
         public void Connect(string ComPort)
         {
+            GC.Collect(); // avoid open connections
             if (IsConnected) throw new Exception($"Already connected to device {SerialD.PortName}");
             SerialD = ComPort == null ? SerialDevice.getAvailable() : new SerialDevice(ComPort);
 
@@ -92,6 +93,7 @@ namespace aDrumsLib
         public void Dispose()
         {
             if (SerialD != null && SerialD.IsOpen) SerialD.Close();
+            SerialD = null;
         }
 
     }
