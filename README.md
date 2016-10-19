@@ -1,5 +1,5 @@
 # aDrums
-[Build Status ![AppVeyor](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)]()
+[![AppVeyor](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)]()
 
 A-Drums is a completly Open Source, Advance Drum MIDI Trigger based on Arduino Leonardo Micro Pro. The idea came after seeing solutions like MegaDRUM but it was closed source. The hardware is open source as well including Eagle Schematics and Eagle Board Layout. It is easy to use and build wile being a robust product.
 
@@ -19,7 +19,8 @@ A-Drums is a completly Open Source, Advance Drum MIDI Trigger based on Arduino L
 - [Arduino Leonardo Pro Micro](https://www.sparkfun.com/products/12640)		$4.13
 - PCB Board		$8.30
 - [Audio Jacks](http://www.ebay.com/itm/141778008302?_trksid=p2060353.m2749.l2649&ssPageName=STRK%3AMEBIDX%3AIT)		$6.87
-- [Rest of electronics]		$2.5 
+- [Rest of electronics]		$2.5
+
 ### Total **$19.24**
 
 I will be adding tutorials on how to build the DIY 3D Printed Drum Set, how to connect with EZ Drummer and Addictive Drums using ASIO4ALL, and aDrums Manager User Manual
