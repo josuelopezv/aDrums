@@ -1,5 +1,5 @@
 # aDrums
-[![Windows Build status](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)]()
+[![AppVeyor](https://img.shields.io/appveyor/ci/gruntjs/grunt.svg)]()
 
 A-Drums is a completly Open Source, Advance Drum MIDI Trigger based on Arduino Leonardo Micro Pro. The idea came after seeing solutions like MegaDRUM but it was closed source. The hardware is open source as well including Eagle Schematics and Eagle Board Layout. It is easy to use and build wile being a robust product.
 
