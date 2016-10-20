@@ -10,6 +10,8 @@ namespace aDrumsLib
     {
         private SerialDevice SerialD { get; set; }
 
+        public IEnumerable< string> Ports { get { return Factory.GetPortNames(); } }
+
         public Version FW_Version
         {
             get

@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "exports": {
+    "aDrumsLib/1.0.0": {
+      "type": "project",
+      "framework": ".NETFramework,Version=v4.5.2",
+      "compile": {
+        "bin/Debug/aDrumsLib.dll": {}
+      },
+      "runtime": {
+        "bin/Debug/aDrumsLib.dll": {}
+      },
+      "contentFiles": {
+        "bin/Debug/aDrumsLib.pdb": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true
+        },
+        "bin/Debug/avruploader/adrums.ino.hex": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/adrums.ino.hex"
+        },
+        "bin/Debug/avruploader/avrdude.conf": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/avrdude.conf"
+        },
+        "bin/Debug/avruploader/avrdude.exe": {
+          "buildAction": "Content",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/avrdude.exe"
+        },
+        "bin/Debug/avruploader/libusb0.dll": {
+          "buildAction": "Content",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/libusb0.dll"
+        },
+        "bin/Debug/avruploader/signed_driver/dpinst-amd64.exe": {
+          "buildAction": "Content",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/signed_driver/dpinst-amd64.exe"
+        },
+        "bin/Debug/avruploader/signed_driver/dpinst-x86.exe": {
+          "buildAction": "Content",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/signed_driver/dpinst-x86.exe"
+        },
+        "bin/Debug/avruploader/signed_driver/sparkfun.cat": {
+          "buildAction": "None",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/signed_driver/sparkfun.cat"
+        },
+        "bin/Debug/avruploader/signed_driver/sparkfun.inf": {
+          "buildAction": "Content",
+          "codeLanguage": "any",
+          "copyToOutput": true,
+          "outputPath": "avruploader/signed_driver/sparkfun.inf"
+        }
+      }
+    }
+  }
+}
