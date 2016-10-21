@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace aDrumsLib
 {
-    public static class Factory
+    sealed class Factory
     {
         public static ISerialPort getSerialPort()
         {

@@ -9,8 +9,6 @@ namespace WebApp.ADrums
 {
     public class Program
     {
-        public static aDrumsLib.DrumManager DrumManager { get; set; }
-
         public const string APP_URL = "http://localhost:5001";
         public static void Main(string[] args)
         {
@@ -23,11 +21,8 @@ namespace WebApp.ADrums
                 .Build();
 
             System.Diagnostics.Process.Start(APP_URL);
-            using (var dm = new aDrumsLib.DrumManager())
-            {
-                DrumManager = dm;
-                host.Run();
-            }
+
+            host.Run();
         }
     }
 }

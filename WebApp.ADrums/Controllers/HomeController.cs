@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using aDrumsLib;
 
 namespace WebApp.ADrums.Controllers
 {
@@ -10,27 +11,27 @@ namespace WebApp.ADrums.Controllers
     {
         public IActionResult Connect()
         {
-            return View(Program.DrumManager.Ports);
+            var m = new Models.vm_Connect();
+            if (!DrumManager.Current.Ports.Any())
+                m.Errors = "No COM Port available are you sure the device is connected";
+            return View(m);
+        }
+
+        [HttpPost]
+        public IActionResult Connect(Models.vm_Connect model)
+        {
+            return View(model);
         }
 
         public IActionResult Index()
         {
-            if (!Program.DrumManager.IsConnected)
-                return RedirectToAction("Connect");
-            return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
+            //if (!DrumManager.Current.IsConnected)
+            //    return RedirectToAction("connect");
+            return View(DrumManager.Current.Jacks);
         }
 
         public IActionResult Contact()
         {
-            ViewData["Message"] = "Your contact page.";
-
             return View();
         }
 

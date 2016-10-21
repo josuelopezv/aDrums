@@ -1,9 +1,71 @@
-﻿@model IEnumerable<string>
+﻿@model WebApp.ADrums.Models.vm_Connect
 @{
     ViewData["Title"] = "Connect";
 }
+
+<div class="row main">
+    <div class="main-login main-center">
+        <form class="form-horizontal" asp-action="connect">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label for="name" class="cols-sm-2 control-label">COM Port</label>
+                <div class="cols-sm-10">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-plug fa" aria-hidden="true"></i></span>
+                        <select asp-for="COM_Port" asp-items="Model.getCOM_List()" class="form-control">
+                            <option disabled selected>SELECT</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="COM_Port" class="text-danger" />
+                </div>
+            </div>
+
+            <div class="form-group ">
+                <input type="submit" value="Connect" class="btn btn-primary btn-lg btn-block login-button" />
+            </div>
+            <div class="login-register">
+                <a asp-action="help">Help</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.Errors))
+{
+    <!-- Modal -->
+    <div class="modal bounceInDown animated" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    @if (!string.IsNullOrEmpty(Model.Errors))
+    {
+        <script type="text/javascript">
+            $(window).load(function () {
+                $('#myModal').modal('show');
+            });
+        </script>
+    }
+}
+
 <style>
-        /*
+    /*
     /* Created by Filipe Pina
      * Specific styles of signin, register, component
      */
@@ -11,14 +73,14 @@
      * General styles
      */
 
-    body, html{
-         height: 100%;
+    body, html {
+        height: 100%;
         background-repeat: no-repeat;
         background-color: #d3d3d3;
         font-family: 'Oxygen', sans-serif;
     }
 
-    .main{
+    .main {
         margin-top: 70px;
     }
 
@@ -28,16 +90,16 @@
         font-weight: 400;
     }
 
-    hr{
+    hr {
         width: 10%;
         color: #fff;
     }
 
-    .form-group{
+    .form-group {
         margin-bottom: 15px;
     }
 
-    label{
+    label {
         margin-bottom: 15px;
     }
 
@@ -47,7 +109,7 @@
         padding-top: 3px;
     }
 
-    .main-login{
+    .main-login {
         background-color: #fff;
         /* shadows and rounded borders */
         -moz-border-radius: 2px;
@@ -56,50 +118,22 @@
         -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
         -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
         box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-
     }
 
-    .main-center{
+    .main-center {
         margin-top: 30px;
         margin: 0 auto;
         max-width: 330px;
         padding: 40px 40px;
-
     }
 
-    .login-button{
+    .login-button {
         margin-top: 5px;
     }
 
-    .login-register{
+    .login-register {
         font-size: 11px;
         text-align: center;
     }
-
 </style>
 
-<div class="row main">
-    <div class="main-login main-center">
-        <form class="form-horizontal" method="post" action="#">
-
-            <div class="form-group">
-                <label for="name" class="cols-sm-2 control-label">COM Port</label>
-                <div class="cols-sm-10">
-                    <div class="input-group">
-                        <span class="input-group-addon"><i class="fa fa-plug fa" aria-hidden="true"></i></span>
-                        <select name="PortName" asp-items="new SelectList(Model)" class="form-control">
-                            <option disabled selected>--- SELECT ---</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group ">
-                <button type="button" class="btn btn-primary btn-lg btn-block login-button">Connect</button>
-            </div>
-            <div class="login-register">
-                <a href="index.php">Help</a>
-            </div>
-        </form>
-    </div>
-</div>

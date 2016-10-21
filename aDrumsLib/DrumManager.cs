@@ -6,11 +6,33 @@ using System.Threading.Tasks;
 
 namespace aDrumsLib
 {
-    public class DrumManager:IDisposable
+    public class DrumManager : IDisposable
     {
+        private static volatile DrumManager instance;
+        private static object syncRoot = new Object();
+
+        public static DrumManager Current
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (instance == null)
+                            instance = new DrumManager();
+                    }
+                }
+
+                return instance;
+            }
+        }
+
         private SerialDevice SerialD { get; set; }
 
-        public IEnumerable< string> Ports { get { return Factory.GetPortNames(); } }
+        public IEnumerable<string> Ports { get { return Factory.GetPortNames(); } }
+
+        public string Jacks { get; private set; }
 
         public Version FW_Version
         {
@@ -22,7 +44,7 @@ namespace aDrumsLib
 
         public int PinCount { get; set; }
 
-        public IEnumerable<MidiTrigger> Triggers { get; set; }
+        public List<MidiTrigger> Triggers { get; set; }
 
         public bool IsConnected
         {
@@ -32,7 +54,10 @@ namespace aDrumsLib
             }
         }
 
-        public DrumManager() { SerialD = null; }
+        public DrumManager()
+        {
+            SerialD = null;
+        }
 
         public void Connect(string ComPort)
         {

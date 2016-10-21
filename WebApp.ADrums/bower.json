@@ -5,12 +5,10 @@
     "bootstrap": "3.3.6",
     "jquery": "2.2.3",
     "jquery-validation": "1.15.0",
-    "jquery-validation-unobtrusive": "3.2.6",
-    "components-font-awesome": "4.6.3",
-    "font-awesome": "4.6.1"
+    "jquery-validation-unobtrusive": "3.2.6"
   },
   "resolutions": {
     "jquery-validation": "1.15.0",
-    "jquery": ">=1.8"
+    "jquery": ">= 1.7.2"
   }
 }
